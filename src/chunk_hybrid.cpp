@@ -11,8 +11,16 @@ struct ChunkExact{
  ull bfsBound,xBound,maxObservedBfs=0,maxObservedX=0;
  ChunkExact(const Graph&gr,int gg):G(gr),g(gg),a(gg/2-1),tag(gr.M),dep(gr.M),par(gr.M),br(gr.M),que(gr.M),used(gr.M),blocked(gr.M){
   delta=0;for(auto &v:G.a)delta=max(delta,(int)v.size());
-  ull power=1,pops=0,checks=0;
-  for(int j=0;j<a;j++){pops+=power;power*=delta;checks+=power;}
+  int dvmax=0,dcmax=0;
+  for(int u=0;u<G.n;u++)dvmax=max(dvmax,(int)G.a[u].size());
+  for(int w=G.n;w<G.M;w++)dcmax=max(dcmax,(int)G.a[w].size());
+  ull layer=1,pops=0,checks=0;
+  for(int j=0;j<=a;j++){
+   pops+=layer;
+   if(j<a){int degree=(j%2==0?dvmax:dcmax);
+    checks+=layer*degree;
+    layer*=j==0?degree:degree-1;}
+  }
   bfsBound=4+pops+checks;
   xBound=4+2*a+2*delta+(2+a)*(ull)delta*delta;
  }
